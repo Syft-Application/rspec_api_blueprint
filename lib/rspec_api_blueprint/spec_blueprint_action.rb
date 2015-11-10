@@ -35,7 +35,7 @@ class SpecBlueprintAction
   def render_response(response)
     buffer = "+ Response #{response.status} (#{response.content_type}; charset=#{response.charset})\n\n"
 
-    return buffer unless response.body.present? && response.content_type.to_s =~ %r{application/json}
+    return buffer unless response.body.present? && json_mime_type == response.content_type.to_s
     buffer << "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(8)
   end
 
@@ -65,7 +65,7 @@ class SpecBlueprintAction
   def request_body(request)
     request_body = request.body.read
     # Request Body
-    return '' unless request_body.present? && request.content_type.to_s == 'application/json'
+    return '' unless request_body.present? && json_mime_type == request.content_type.to_s
     "+ Body\n\n".indent(4) +
       JSON.pretty_generate(JSON.parse(request.body.read)).indent(12)
   end
@@ -104,5 +104,9 @@ class SpecBlueprintAction
       s.prepend(ALPHABET[r])
     end
     s
+  end
+
+  def json_mime_type
+    @json_mime_type ||= Mime::Type.lookup('application/json')
   end
 end
