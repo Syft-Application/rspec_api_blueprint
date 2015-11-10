@@ -32,22 +32,24 @@ Write tests using the following convention:
 
 Example:
 
-    describe 'Arenas Requests' do
-      describe 'arenas [/v1/arenas]' do
-          describe 'create an arena [POST]' do
-            it 'responds with the created arena' do
-              arena = build :arena, foursquare_id: '5104'
-              post v1_arena_path(arena)
-    
-              response.status.should eq(201)
-            end
-          end
+```ruby
+describe 'Arenas Requests' do
+  describe 'arenas [/v1/arenas]' do
+      describe 'create an arena [POST]' do
+        it 'responds with the created arena' do
+          arena = build :arena, foursquare_id: '5104'
+          post v1_arena_path(arena)
+
+          response.status.should eq(201)
         end
+      end
     end
+end
+```
 
 The output:
 
-    # Arenas
+    # Group Arenas
     
     ## arenas [/v1/arenas]
     
@@ -76,11 +78,6 @@ The output:
           }
         }
 
-## Caveats
-
-401, 403 and 301 statuses are ignored since rspec produces a undesired output.
-
-TODO: Add option to choose ignored statuses.
 
 ## Contributing
 

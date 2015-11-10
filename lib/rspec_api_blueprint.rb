@@ -9,9 +9,16 @@ RSpec.configure do |config|
     Dir.glob(File.join(api_docs_folder_path, '*_blueprint.md')).each do |f|
       File.delete(f)
     end
+    SpecBlueprintTranslator.begin
+  end
+
+  config.after(:each, type: :request) do |example|
+    SpecBlueprintTranslator.record_example(example, request, response)
   end
 
   config.after(:suite) do
+    SpecBlueprintTranslator.end
+
     append = -> (handle, file) { handle.puts File.read(File.join(api_docs_folder_path, file)) }
 
     File.open(File.join(api_docs_folder_path, 'apiary.apib'), 'wb') do |apiary|
@@ -28,17 +35,6 @@ RSpec.configure do |config|
 
         append.call(apiary, File.basename(file))
       end
-    end
-  end
-
-  config.after(:each, type: :request) do |example|
-    translator = SpecBlueprintTranslator.new(example, request, response)
-
-    if translator.can_make_blueprint?
-      translator.open_file_from_grouping
-      translator.write_resource_to_file
-      translator.write_action_to_file
-      translator.close_file
     end
   end
 end
