@@ -10,12 +10,13 @@ class SpecBlueprintAction
     @requests = []
   end
 
-  def add_request_with_response(request, response)
-    @requests << [
-      render_request(request),
-      render_response(response),
-      request_content_type(request)
-    ]
+  def add_transaction_example(request, response, title)
+    @requests << {
+      request: render_request(request),
+      response: render_response(response),
+      mime_type: request_content_type(request),
+      title: title
+    }
   end
 
   def render_requests
@@ -86,8 +87,8 @@ class SpecBlueprintAction
     include_suffix = @requests.count > 1
     @requests.each_with_index.map do |rr, index|
       title_suffix = include_suffix ? title_suffix(index + 1) : ''
-      title = "Request #{title_suffix} (#{rr[2]})"
-      yield rr[0], rr[1], title
+      title = "Request #{rr[:title] || title_suffix} (#{rr[2]})"
+      yield rr[:request], rr[:response], title
     end
   end
 
