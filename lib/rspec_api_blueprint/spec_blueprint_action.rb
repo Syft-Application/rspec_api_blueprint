@@ -87,7 +87,7 @@ class SpecBlueprintAction
     include_suffix = @requests.count > 1
     @requests.each_with_index.map do |rr, index|
       title_suffix = include_suffix ? title_suffix(index + 1) : ''
-      title = "Request #{rr[:title] || title_suffix} (#{rr[2]})"
+      title = "Request #{rr[:title] || title_suffix} (#{rr[:mime_type]})"
       yield rr[:request], rr[:response], title
     end
   end
