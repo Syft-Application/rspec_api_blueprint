@@ -7,11 +7,11 @@ class SpecBlueprintAction
   def initialize(request_method, identifier)
     @request_method = request_method
     @identifier = identifier
-    @requests = []
+    @examples = []
   end
 
   def add_transaction_example(request, response, title)
-    @requests << {
+    @examples << {
       request: render_request(request),
       response: render_response(response),
       mime_type: request_content_type(request),
@@ -19,7 +19,7 @@ class SpecBlueprintAction
     }
   end
 
-  def render_requests
+  def render_examples
     each_request_with_reponse do |request, response, title|
       "+ #{title}\n\n#{request}\n\n#{response}"
     end.join("\n\n")
@@ -42,7 +42,7 @@ class SpecBlueprintAction
 
   def to_s
     "### #{identifier} [#{request_method}]\n\n" +
-      render_requests
+      render_examples
   end
 
   private
@@ -52,7 +52,7 @@ class SpecBlueprintAction
   end
 
   def request_headers(request)
-    env = request.env ? request.env : request.headers
+    env = request.env || request.headers
     headers = env.map do |header, value|
       next unless ALLOWED_HEADERS.include?(header)
       header = header.gsub(/HTTP_/, '')
@@ -84,11 +84,11 @@ class SpecBlueprintAction
   end
 
   def each_request_with_reponse
-    include_suffix = @requests.count > 1
-    @requests.each_with_index.map do |rr, index|
+    include_suffix = @examples.count > 1
+    @examples.each_with_index.map do |example, index|
       title_suffix = include_suffix ? title_suffix(index + 1) : ''
-      title = "Request #{rr[:title] || title_suffix} (#{rr[:mime_type]})"
-      yield rr[:request], rr[:response], title
+      title = "Request #{example[:title] || title_suffix} (#{example[:mime_type]})"
+      yield example[:request], example[:response], title
     end
   end
 
