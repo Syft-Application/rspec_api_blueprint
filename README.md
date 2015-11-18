@@ -32,22 +32,24 @@ Write tests using the following convention:
 
 Example:
 
-    describe 'Arenas Requests' do
-      describe 'arenas [/v1/arenas]' do
-          describe 'create an arena [POST]' do
-            it 'responds with the created arena' do
-              arena = build :arena, foursquare_id: '5104'
-              post v1_arena_path(arena)
-    
-              response.status.should eq(201)
-            end
-          end
+```ruby
+describe 'Arenas Requests' do
+  describe 'arenas [/v1/arenas]' do
+      describe 'create an arena [POST]' do
+        it 'responds with the created arena' do
+          arena = build :arena, foursquare_id: '5104'
+          post v1_arena_path(arena)
+
+          response.status.should eq(201)
         end
+      end
     end
+end
+```
 
 The output:
 
-    # Arenas
+    # Group Arenas
     
     ## arenas [/v1/arenas]
     
@@ -76,11 +78,78 @@ The output:
           }
         }
 
-## Caveats
+### Multiple transaction examples
 
-401, 403 and 301 statuses are ignored since rspec produces a undesired output.
+```ruby
+describe 'Arenas Requests' do
+  describe 'arenas [/v1/arenas]' do
+      describe 'create an arena [POST]' do
+        it 'responds with the created arena', as: 'succeed' do
+          arena = build :arena, foursquare_id: '5104'
+          post v1_arena_path(arena)
 
-TODO: Add option to choose ignored statuses.
+          response.status.should eq(201)
+        end
+
+        it 'responds with the created arena', as: 'with errors' do
+          arena = build :arena, foursquare_id: '5104'
+          post v1_arena_path({with: :wrongd_data})
+
+          response.status.should eq(400)
+        end
+      end
+    end
+end
+```
+
+The output:
+
+    # Group Arenas
+    
+    ## arenas [/v1/arenas]
+    
+    ### create an arena [POST]
+    + Request succeed
+        + Headers
+            
+        + Body
+            {
+                "id": "4e9dbbc2-830b-41a9-b7db-9987735a0b2a",
+                "name": "Clinton St. Baking Co. & Restaurant",
+                "latitude": 40.721294,
+                "longitude": -73.983994,
+                "foursquare_id": "5104"
+            }
+
+    + Response 200 (application/json)
+
+        {
+          "arena": {
+            "id": "4e9dbbc2-830b-41a9-b7db-9987735a0b2a",
+            "name": "Clinton St. Baking Co. & Restaurant",
+            "latitude": 40.721294,
+            "longitude": -73.983994,
+            "foursquare_id": "5104"
+          }
+        }
+
+    + Request with errors
+        + Headers
+            
+        + Body
+            {
+                "id": "4e9dbbc2-830b-41a9-b7db-9987735a0b2a",
+                "name": "Clinton St. Baking Co. & Restaurant",
+                "latitude": 40.721294,
+                "longitude": -73.983994,
+                "foursquare_id": "5104"
+            }
+
+    + Response 400 (application/json)
+
+        {
+          "error": "invalid data provided"
+        }
 
 ## Contributing
 
