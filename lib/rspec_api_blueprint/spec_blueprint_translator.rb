@@ -13,7 +13,11 @@ class SpecBlueprintTranslator
                     example.metadata[:document] == true
 
       name = group_name(group_metas[-1])
-      group = (@groups[name] ||= SpecBlueprintGroup.new(name))
+      order = File.basename(example.metadata[:absolute_file_path])
+                  .split('_')
+                  .first
+                  .to_i
+      group = (@groups[name] ||= SpecBlueprintGroup.new(name, order))
 
       name = resource_name(group_metas[-2])
       resource = (group.resources[name] ||= SpecBlueprintResource.new(name, resource_description(group_metas[-2])))
