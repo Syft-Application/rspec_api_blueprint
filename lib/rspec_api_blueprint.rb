@@ -24,7 +24,7 @@ RSpec.configure do |config|
     File.open(File.join(api_docs_folder_path, 'apiary.apib'), 'wb') do |apiary|
       append.call(apiary, 'introduction.md')
 
-      Dir[File.join(api_docs_folder_path, '*_blueprint.md')].each do |file|
+      Dir[File.join(api_docs_folder_path, '*_blueprint.md')].sort.each do |file|
         header = file.gsub('_blueprint.md', '_header.md')
 
         if File.exist? header
