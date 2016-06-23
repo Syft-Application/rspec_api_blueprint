@@ -69,8 +69,8 @@ class SpecBlueprintTranslator
     end
 
     def request_method(group_metas)
-      group_metas[-3][:description_args].first.match(/(.+)\[(.+)\]/)
-      Regexp.last_match(2).upcase
+      group_metas[-3][:description_args].first.match(/(\w+)\s(.+)/)
+      Regexp.last_match(1)
     end
 
     def action_indetifier(group_metas)
