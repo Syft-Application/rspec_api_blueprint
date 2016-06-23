@@ -13,7 +13,8 @@ class SpecBlueprintTranslator
                     example.metadata[:document] == true
 
       name = group_name(group_metas[-1])
-      order = File.basename(example.metadata[:rerun_file_path])
+
+      order = File.basename("./#{example.metadata[:absolute_file_path].split('/').last}")
                   .split('_')
                   .first
                   .to_i
