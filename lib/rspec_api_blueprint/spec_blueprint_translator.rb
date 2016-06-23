@@ -74,6 +74,7 @@ class SpecBlueprintTranslator
       unless match_string.kind_of? String
         raise Exceptions::SpecFormattingError.new("#{match_string} must be a string")
       end
+      match_string.match(/(\w+)\s(.+)/)
       Regexp.last_match(1)
     end
 
