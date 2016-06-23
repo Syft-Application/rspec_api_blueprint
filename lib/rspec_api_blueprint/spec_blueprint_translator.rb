@@ -70,7 +70,10 @@ class SpecBlueprintTranslator
     end
 
     def request_method(group_metas)
-      group_metas[-3][:description_args].first.match(/(\w+)\s(.+)/)
+      match_string = group_metas[-3][:description_args].first
+      unless match_string.kind_of? String
+        raise Exceptions::SpecFormattingError.new("#{match_string} must be a string")
+      end
       Regexp.last_match(1)
     end
 

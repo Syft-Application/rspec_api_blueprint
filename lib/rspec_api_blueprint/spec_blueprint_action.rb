@@ -78,7 +78,7 @@ class SpecBlueprintAction
 
     query_strings.each do |value|
       key, example = value.split('=')
-      params << "+ #{key} = '#{example}'\n".indent(12)
+      params << "+ #{key}: '#{example}'\n".indent(12)
     end
     params
   end
