@@ -25,7 +25,7 @@ class SpecBlueprintTranslator
 
       request_method = request_method(group_metas)
       action = (resource.actions[request_method] ||= SpecBlueprintAction.new(request_method,
-                                                                             action_indetifier(group_metas)))
+                                                                             action_indentifier(group_metas)))
       action.add_transaction_example request, response, example.metadata[:as]
     end
 
@@ -70,13 +70,13 @@ class SpecBlueprintTranslator
     end
 
     def request_method(group_metas)
-      group_metas[-3][:description_args].first.match(/(.+)\[(.+)\]/)
-      Regexp.last_match(2).upcase
+      group_metas[-3][:description_args].first.match(/(\w+)\s(.+)/)
+      Regexp.last_match(1)
     end
 
-    def action_indetifier(group_metas)
-      group_metas[-3][:description_args].first.match(/(.+)\[(.+)\]/)
-      Regexp.last_match(1)
+    def action_indentifier(group_metas)
+      group_metas[-3][:description_args].first.match(/(\w+)\s(.+)/)
+      Regexp.last_match(2)
     end
   end
 end
