@@ -74,8 +74,8 @@ class SpecBlueprintTranslator
     end
 
     def action_indentifier(group_metas)
-      group_metas[-3][:description_args].first.match(/(.+)\[(.+)\]/)
-      Regexp.last_match(1)
+      group_metas[-3][:description_args].first.match(/(\w+)\s(.+)/)
+      Regexp.last_match(2)
     end
   end
 end
