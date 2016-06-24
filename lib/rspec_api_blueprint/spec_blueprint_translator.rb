@@ -26,7 +26,7 @@ class SpecBlueprintTranslator
       request_method = request_method(group_metas)
       action = (resource.actions[request_method] ||= SpecBlueprintAction.new(request_method,
                                                                              action_indentifier(group_metas)))
-      action.add_transaction_example request, response, example.metadata[:as]
+      action.add_transaction_example request, response, example.metadata[:as], description: example.metadata[:description]
     end
 
     def end

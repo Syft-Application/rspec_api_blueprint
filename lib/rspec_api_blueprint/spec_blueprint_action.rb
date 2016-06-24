@@ -10,18 +10,19 @@ class SpecBlueprintAction
     @examples = []
   end
 
-  def add_transaction_example(request, response, title)
+  def add_transaction_example(request, response, title, opts={})
     @examples << {
       request: render_request(request),
       response: render_response(response),
       mime_type: request_content_type(request),
-      title: title
+      title: title,
+      description: opts[:description]
     }
   end
 
   def render_examples
-    each_request_with_reponse do |request, response, title|
-      "+ #{title}\n\n#{request}\n\n#{response}"
+    each_request_with_reponse do |request, response, title, description|
+      "+ #{title}\n\n#{description}\n\n#{request}\n\n#{response}"
     end.join("\n\n")
   end
 
@@ -73,12 +74,12 @@ class SpecBlueprintAction
 
   def request_parameters(request)
     return unless request.env['QUERY_STRING'].present?
-    params = "+ Parameters\n\n".indent(4)
+    params = "Parameters\n\n".indent(4)
     query_strings = URI.decode(request.env['QUERY_STRING']).split('&')
 
     query_strings.each do |value|
       key, example = value.split('=')
-      params << "+ #{key}: '#{example}'\n".indent(12)
+      params << "#{key}: '#{example}'\n".indent(12)
     end
     params
   end
@@ -88,7 +89,8 @@ class SpecBlueprintAction
     @examples.each_with_index.map do |example, index|
       title_suffix = include_suffix ? title_suffix(index + 1) : ''
       title = "Request #{example[:title] || title_suffix} (#{example[:mime_type]})"
-      yield example[:request], example[:response], title
+      description = "#{example[:description]}".indent(4)
+      yield example[:request], example[:response], title, description
     end
   end
 
