@@ -38,7 +38,9 @@ class SpecBlueprintAction
     buffer = "+ Response #{response.status} (#{response.content_type}; charset=#{response.charset})\n\n"
 
     return buffer unless response.body.present? && json_mime_type == response.content_type.to_s
-    buffer << "#{JSON.pretty_generate(JSON.parse(response.body))}\n\n".indent(8)
+    response_json = JSON.parse(response.body)
+    response_json.delete 'trace' #don't show stack trace in docs
+    buffer << "#{JSON.pretty_generate(response_json)}\n\n".indent(8)
   end
 
   def to_s
