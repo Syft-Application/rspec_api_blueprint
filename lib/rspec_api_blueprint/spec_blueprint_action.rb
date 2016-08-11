@@ -69,21 +69,31 @@ class SpecBlueprintAction
   def request_body(request)
     request_body = request.body.read
     # Request Body
-    return '' unless request_body.present? && json_mime_type == request.content_type.to_s
-    "+ Body\n\n".indent(4) +
-      JSON.pretty_generate(JSON.parse(request.body.read)).indent(12)
+    return '' unless request_body.present?
+    if json_mime_type == request.content_type.to_s
+      "+ Body\n\n".indent(4) +
+        JSON.pretty_generate(JSON.parse(request.body.read)).indent(12)
+    elsif form_mime_type == request.content_type.to_s
+      "+ Body\n\n".indent(4) + pretty_query_string(request_body)
+    elsif multipart_form_mime_type == request.content_type.to_s
+      "+ Body\n\n".indent(4) + 'multipart'.indent(12)
+    else
+      ''
+    end
   end
 
   def request_parameters(request)
     return unless request.env['QUERY_STRING'].present?
-    params = "Parameters\n\n".indent(4)
-    query_strings = URI.decode(request.env['QUERY_STRING']).split('&')
+    "Parameters\n\n".indent(4) + pretty_query_string(request.env['QUERY_STRING'])
+  end
 
-    query_strings.each do |value|
+  def pretty_query_string(qs)
+    query_strings = URI.decode(qs).split('&')
+
+    query_strings.map do |value|
       key, example = value.split('=')
-      params << "#{key}: '#{example}'\n".indent(12)
-    end
-    params
+      "#{key}: '#{example}'\n".indent(12)
+    end.join
   end
 
   def each_request_with_reponse
@@ -113,5 +123,13 @@ class SpecBlueprintAction
 
   def json_mime_type
     @json_mime_type ||= Mime::Type.lookup('application/json')
+  end
+
+  def form_mime_type
+    @form_mime_type ||= Mime::Type.lookup('application/x-www-form-urlencoded')
+  end
+
+  def multipart_form_mime_type
+    @multipart_form_mime_type ||= Mime::Type.lookup('multipart/form-data')
   end
 end
